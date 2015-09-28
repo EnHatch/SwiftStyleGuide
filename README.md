@@ -139,6 +139,21 @@ When they are needed, use comments to explain **why** a particular piece of code
 Avoid block comments inline with code, as the code should be as self-documenting as possible. *Exception: This does not apply to those comments used to generate documentation.*
 
 
+### Imports
+
+Imports should be separated into 2 segments with a space between the two segments. 
++ Apple Frameworks
++ Third Party Frameworks
+
+```swift
+import UIKit
+import CoreData
+
+import Watchdog
+import Fabric
+```
+
+
 ## Classes and Structures
 
 ### Which one to use?
