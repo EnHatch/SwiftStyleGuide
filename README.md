@@ -1,32 +1,20 @@
-# SwiftStyleGuide
-Enhatch Swift Style Guide based off the [raywenderlich.com Style Guide](https://github.com/raywenderlich/swift-style-guide)
+# Enhatch - Swift Style Guide
 
-## Table of Contents
+This document contains a set of recommended guidelines, conventions, and best pracitices for writing code in our iOS code base. Strict adherence to the guide is enforced to improve readability and consistancy. Remever that code is read much more often than it is written, and that 80% of the lifetime cost of software goes to maintainence. The idea is to keep a set of guidelines for everyone to follow in order to make the code more consistent, understandable, and less prone to the unobvious pitfalls.
 
-* [Naming](#naming)
-  * [Prose](#prose)
-  * [Class Prefixes](#class-prefixes)
-* [Spacing](#spacing)
-* [Comments](#comments)
-* [Classes and Structures](#classes-and-structures)
-  * [Use of Self](#use-of-self)
-  * [Protocol Conformance](#protocol-conformance)
-  * [Computed Properties](#computed-properties)
-* [Function Declarations](#function-declarations)
-* [Closure Expressions](#closure-expressions)
-* [Types](#types)
-  * [Constants](#constants)
-  * [Optionals](#optionals)
-  * [Struct Initializers](#struct-initializers)
-  * [Type Inference](#type-inference)
-  * [Syntactic Sugar](#syntactic-sugar)
-* [Control Flow](#control-flow)
-* [Semicolons](#semicolons)
-* [Language](#language)
-* [Copyright Statement](#copyright-statement)
-* [Smiley Face](#smiley-face)
-* [Credits](#credits)
+**Note:** Suggestions for improvements are highly encouraged. 
 
+**Note:** Apple is generally right. Defer to Apple's preferred or demonstrated way of doing things. You should follow the style of Apple's code as defined within their [“The Swift Programming Language”](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/index.html#//apple_ref/doc/uid/TP40014097-CH3-ID0) book wherever possible. However Apple is a large corporation and be prepared to see discrepancies in their example code.
+
+## Spacing
+
+**Indent using 2 spaces** rather than tabs to conserve space and help prevent line wrapping. Be sure to set this preference in Xcode as shown below
+
+Make sure you have **Automatically trim trailing whitespace** and **Including whitespace-only lines** enabled in Xcode.
+
+There should be exactly one blank line between methods to aid in visual clarity and organization. Whitespace within methods should separate functionality, but having too many sections in a method often means you should refactor into several methods.
+
+**Tip:** You can re-indent by selecting some code (or ⌘A to select all) and then Control-I (or Editor\Structure\Re-Indent in the menu). Some of the Xcode template code will have 4-space tabs hard coded, so this is a good way to fix that.
 
 ## Naming
 
@@ -58,21 +46,21 @@ For functions and init methods, prefer named parameters for all arguments unless
 
 ```swift
 func dateFromString(dateString: String) -> NSDate
-func convertPointAt(#column: Int, #row: Int) -> CGPoint
-func timedAction(#delay: NSTimeInterval, perform action: SKAction) -> SKAction!
+func convertPointAt(column column: Int, row: Int) -> CGPoint
+func timedAction(afterDelay delay: NSTimeInterval, perform action: SKAction) -> SKAction!
 
 // would be called like this:
 dateFromString("2014-03-14")
 convertPointAt(column: 42, row: 13)
-timedAction(delay: 1.0, perform: someOtherAction)
+timedAction(afterDelay: 1.0, perform: someOtherAction)
 ```
 
 For methods, follow the standard Apple convention of referring to the first parameter in the method name:
 
 ```swift
-class Guideline {
-  func combineWithString(incoming: String, options: Dictionary?) { ... }
-  func upvoteBy(amount: Int) { ... }
+class Counter {
+  func combineWith(otherCounter: Counter, options: Dictionary?) { ... }
+  func incrementBy(amount: Int) { ... }
 }
 ```
 
@@ -89,6 +77,7 @@ enum Shape {
 }
 ```
 
+When writing switch statments, scope the cases and avoid using a default or catch-all (e.g. don’t use default just to omit the last case). When possible, default should be an error case.
 
 ### Class Prefixes
 
@@ -100,59 +89,58 @@ import SomeModule
 let myClass = MyModule.UsefulClass()
 ```
 
-
-## Spacing
-
-* Indent using 2 spaces rather than tabs to conserve space and help prevent line wrapping. Be sure to set this preference in Xcode as shown below:
-
-  ![Xcode indent settings](screens/indentation.png)
-
-* Method braces and other braces (`if`/`else`/`switch`/`while` etc.) always open on the same line as the statement but close on a new line.
-* Tip: You can re-indent by selecting some code (or ⌘A to select all) and then Control-I (or Editor\Structure\Re-Indent in the menu). Some of the Xcode template code will have 4-space tabs hard coded, so this is a good way to fix that.
-
-**Preferred:**
-```swift
-if user.isHappy {
-  // Do something
-} else {
-  // Do something else
-}
-```
-
-**Not Preferred:**
-```swift
-if user.isHappy
-{
-    // Do something
-}
-else {
-    // Do something else
-}
-```
-
-* There should be exactly one blank line between methods to aid in visual clarity and organization. Whitespace within methods should separate functionality, but having too many sections in a method often means you should refactor into several methods.
-
 ## Comments
 
-When they are needed, use comments to explain **why** a particular piece of code does something. Comments must be kept up-to-date or deleted.
+### General Commenting
 
-Avoid block comments inline with code, as the code should be as self-documenting as possible. *Exception: This does not apply to those comments used to generate documentation.*
+Use comments to provide additional information about a function that isn't clearly understood from the function's name.
 
+**Tip:** A good rule of thumb is to consider the amount of time it takes for a person with zero context to understand/modify your code with vs. without comments. 
 
-### Imports
+**Tip:**  When you find yourself writing a lot of comments about a chunk of code, you should also consider rearchitecting or breaking down the code.
 
-Imports should be separated into 2 segments with a space between the two segments. 
-+ Apple Frameworks
-+ Third Party Frameworks
+### Documentation
+
+All internal and public methods must have documentation comments. This allows other developers to have more context when they need to access a class/function they didn't write. It also allows us to use tools to autogenerate documention pages to make it easier for engineers to understand code they didn't write. More detail on the swift documentation can be found on this [NSHipster post](http://nshipster.com/swift-documentation/).
 
 ```swift
-import UIKit
-import CoreData
-
-import Watchdog
-import Fabric
+/**
+	Removes a single separator at the beginning and/or end of a string if it is the first/last character
+	
+	- parameter string: The string to modify
+	- returns: A string with a single separator removed from the beginning and/or end if it is the first/last character
+ */
 ```
 
+### MARK/TODO/FIXME
+
+Use MARKs to divide functionarionality into meaningful, easy-to-navigate sections. 
+
+```
+// MARK: UITableviewDelegate
+```
+
+Use TODOs and FIXMEs to label code that has yet to be done, needs additonal functionality, or to document a hack that should be handled differently when there is more time.
+All TODOs and FIXMEs should follow the following format ```TODO:(<name>) <date> <description>```
+
+```
+// TODO:(ed) 12-20-2015 Finish the style guide!
+```
+
+## Imports
+
+Imports should be separated into two segments with a space between them and should be sorted alphabetically.
+
+- Apple Frameworks
+- Third Party Frameworks
+
+```
+import CoreData
+import UIKit
+
+import Fabric
+import Watchdog
+```
 
 ## Classes and Structures
 
@@ -211,7 +199,6 @@ The example above demonstrates the following style guidelines:
  + Define multiple variables and structures on a single line if they share a common purpose / context.
  + Indent getter and setter definitions and property observers.
  + Don't add modifiers such as `internal` when they're already the default. Similarly, don't repeat the access modifier when overriding a method.
- + Order of declarations: Public Constants, Private Constants, Public Variables, Private Variables, Inits, Public Methods, Override Public Methods, Private Methods
 
 
 ### Use of Self
@@ -239,9 +226,8 @@ class BoardLocation {
 
 When adding protocol conformance to a class, prefer adding a separate class extension for the protocol methods. This keeps the related methods grouped together with the protocol and can simplify instructions to add a protocol to a class with its associated methods.
 
-Also, don't forget the `// MARK: -` comment to keep things well-organized!
-
 **Preferred:**
+
 ```swift
 class MyViewcontroller: UIViewController {
   // class stuff here
@@ -259,6 +245,7 @@ extension MyViewcontroller: UIScrollViewDelegate {
 ```
 
 **Not Preferred:**
+
 ```swift
 class MyViewcontroller: UIViewController, UITableViewDataSource, UIScrollViewDelegate {
   // all methods
@@ -270,6 +257,7 @@ class MyViewcontroller: UIViewController, UITableViewDataSource, UIScrollViewDel
 For conciseness, if a computed property is read-only, omit the get clause. The get clause is required only when a set clause is provided.
 
 **Preferred:**
+
 ```swift
 var diameter: Double {
   return radius * 2
@@ -277,6 +265,7 @@ var diameter: Double {
 ```
 
 **Not Preferred:**
+
 ```swift
 var diameter: Double {
   get {
@@ -304,12 +293,14 @@ func reticulateSplines(spline: [Double], adjustmentFactor: Double,
 }
 ```
 
+Make methods class methods if they don't depends on instance state (e.g. if the method doesn't use any instance variables). This makes it much easier to reason through a method if there is no need to think about the states it can be in.
 
 ## Closure Expressions
 
 Use trailing closure syntax only if there's a single closure expression parameter at the end of the argument list. Give the closure parameters descriptive names.
 
 **Preferred:**
+
 ```swift
 UIView.animateWithDuration(1.0) {
   self.myView.alpha = 0
@@ -326,6 +317,7 @@ UIView.animateWithDuration(1.0,
 ```
 
 **Not Preferred:**
+
 ```swift
 UIView.animateWithDuration(1.0, animations: {
   self.myView.alpha = 0
@@ -353,12 +345,14 @@ attendeeList.sort { a, b in
 Always use Swift's native types when available. Swift offers bridging to Objective-C so you can still use the full set of methods as needed.
 
 **Preferred:**
+
 ```swift
 let width = 120.0                                    // Double
 let widthString = (width as NSNumber).stringValue    // String
 ```
 
 **Not Preferred:**
+
 ```swift
 let width: NSNumber = 120.0                          // NSNumber
 let widthString: NSString = width.stringValue        // NSString
@@ -398,6 +392,7 @@ When naming optional variables and properties, avoid naming them like `optionalS
 For optional binding, shadow the original name when appropriate rather than using names like `unwrappedView` or `actualLabel`.
 
 **Preferred:**
+
 ```swift
 var subview: UIView?
 var volume: Double?
@@ -409,6 +404,7 @@ if let subview = subview, volume = volume {
 ```
 
 **Not Preferred:**
+
 ```swift
 var optionalSubview: UIView?
 var volume: Double?
@@ -420,29 +416,40 @@ if let unwrappedSubview = optionalSubview {
 }
 ```
 
+**Note:** Avoid ```!``` where possible
+
+In general prefer ```if let```, ```guard let```, and ```assert``` to ```!```, whether as a type, a property/method chain, ```as!```, or ```try!```. It’s better to provide a tailored error message or a default value than to crash without explanation. Design with the possibility of failure in mind.
+
+As an author, if you do use ```!```, consider leaving a comment indicating what assumption must hold for it to be used safely, and where to look if that assumption is invalidated and the program crashes. Consider whether that assumption could reasonably be invalidated in a way that would leave the now-invalid ```!``` unchanged.
+
+As a reviewer, treat ```!``` with skepticism.
+
 ### Struct Initializers
 
 Use the native Swift struct initializers rather than the legacy CGGeometry constructors.
 
 **Preferred:**
+
 ```swift
 let bounds = CGRect(x: 40, y: 20, width: 120, height: 80)
 let centerPoint = CGPoint(x: 96, y: 42)
 ```
 
 **Not Preferred:**
+
 ```swift
 let bounds = CGRectMake(40, 20, 120, 80)
 let centerPoint = CGPointMake(96, 42)
 ```
 
-Prefer the struct-scope constants `CGRect.infiniteRect`, `CGRect.nullRect`, etc. over global constants `CGRectInfinite`, `CGRectNull`, etc. For existing variables, you can use the shorter `.zeroRect`.
+Prefer the struct-scope constants `CGRect.infinite`, `CGRect.null`, etc. over global constants `CGRectInfinite`, `CGRectNull`, etc. For existing variables, you can use the shorter `.zero`.
 
 ### Type Inference
 
 Prefer compact code and let the compiler infer the type for a constant or variable, unless you need a specific type other than the default such as `CGFloat` or `Int16`.
 
 **Preferred:**
+
 ```swift
 let message = "Click the button"
 let currentBounds = computeViewBounds()
@@ -451,6 +458,7 @@ let maximumWidth: CGFloat = 106.5
 ```
 
 **Not Preferred:**
+
 ```swift
 let message: String = "Click the button"
 let currentBounds: CGRect = computeViewBounds()
@@ -465,6 +473,7 @@ var names: [String] = []
 Prefer the shortcut versions of type declarations over the full generics syntax.
 
 **Preferred:**
+
 ```swift
 var deviceModels: [String]
 var employees: [Int: String]
@@ -472,6 +481,7 @@ var faxNumber: Int?
 ```
 
 **Not Preferred:**
+
 ```swift
 var deviceModels: Array<String>
 var employees: Dictionary<Int, String>
@@ -481,20 +491,24 @@ var faxNumber: Optional<Int>
 
 ## Control Flow
 
-Prefer the `for-in` style of `for` loop over the `for-condition-increment` style.
+Prefer the `for-in` style of `for` loop over the `for-condition-increment` style. 
+
+Braces go on the same line as the conditions.
 
 **Preferred:**
+
 ```swift
 for _ in 0..<3 {
   println("Hello three times")
 }
 
-for (index, person) in enumerate(attendeeList) {
+for (index, person) in attendeeList.enumerate() {
   println("\(person) is at position #\(index)")
 }
 ```
 
 **Not Preferred:**
+
 ```swift
 for var i = 0; i < 3; i++ {
   println("Hello three times")
@@ -506,6 +520,40 @@ for var i = 0; i < attendeeList.count; i++ {
 }
 ```
 
+### Early Returns & Guards
+When possible, use ```guard``` statements to handle early returns or other exits (e.g. fatal errors or thrown errors).
+
+**Preferred:**
+
+```swift
+guard let safeValue = criticalValue else {
+    fatalError("criticalValue cannot be nil here")
+}
+someNecessaryOperation(safeValue)
+```
+
+**Not Preferred:**
+
+```swift
+if let safeValue = criticalValue {
+    someNecessaryOperation(safeValue)
+} else {
+    fatalError("criticalValue cannot be nil here")
+}
+```
+
+**Also Not Preferred:**
+
+```swift
+if criticalValue == nil {
+    fatalError("criticalValue cannot be nil here")
+}
+someNecessaryOperation(criticalValue!)
+```
+
+This flattens code otherwise tucked into an ```if let``` block, and keeps early exits near their relevant condition instead of down in an ```else``` block.
+
+Even when you're not capturing a value (```guard let```), this pattern enforces the early exit at compile time. In the second ```if``` example, though code is flattened like with guard, accidentally changing from a fatal error or other return to some non-exiting operation will cause a crash (or invalid state depending on the exact case). Removing an early exit from the ```else``` block of a ```guard``` statement would immediately reveal the mistake.
 
 ## Semicolons
 
@@ -516,11 +564,13 @@ Do not write multiple statements on a single line separated with semicolons.
 The only exception to this rule is the `for-conditional-increment` construct, which requires semicolons. However, alternative `for-in` constructs should be used where possible.
 
 **Preferred:**
+
 ```swift
 let swift = "not a scripting language"
 ```
 
 **Not Preferred:**
+
 ```swift
 let swift = "not a scripting language";
 ```
@@ -532,44 +582,53 @@ let swift = "not a scripting language";
 Use US English spelling to match Apple's API.
 
 **Preferred:**
+
 ```swift
 let color = "red"
 ```
 
 **Not Preferred:**
+
 ```swift
 let colour = "red"
 ```
 
-## Copyright Statement
+## Extensions for Code Organization
+Extensions should be used to help organize code.
 
-The following copyright statement should be included at the top of every source
-file:
+## Best Practices
 
-    /*
-     * Copyright (c) 2015 Razeware LLC
-     * 
-     * Permission is hereby granted, free of charge, to any person obtaining a copy
-     * of this software and associated documentation files (the "Software"), to deal
-     * in the Software without restriction, including without limitation the rights
-     * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-     * copies of the Software, and to permit persons to whom the Software is
-     * furnished to do so, subject to the following conditions:
-     * 
-     * The above copyright notice and this permission notice shall be included in
-     * all copies or substantial portions of the Software.
-     * 
-     * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-     * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-     * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-     * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-     * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-     * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-     * THE SOFTWARE.
-     */
+### Keep your methods small and focused
+Try to keep your methods short and easy to reason about. Break methods up by functionalities!
 
+### Name your methods by the functionalities they provide
+Method names should reflect what they do instead of what is calling them.
 
-## Credits
+Never write code merely to attempt to reduce the number of keystrokes you need to type. Rely on autocompletion, autosuggestion, copy and paste, etc instead. Verbosity is often helpful to other maintainers of your code. That said, being overly verbose can bypass one of Swift's key benefits: type inference.
 
-This style guide was based off the [raywenderlich.com Style Guide](https://github.com/raywenderlich/swift-style-guide)
+### Expose as little as possible in public interfaces
+Consumers of a class should only be concerned with what the class promises to do. The more internal details you expose, the more things are likely to break when you modify the implementation of your code.  Marking a definition as "private" or "internal" can act as lightweight documentation for your code. Anyone reading the code will know that these elements are "hands off". Conversely, marking a definition as "public" is an invite for other code to access the marked elements. It is best to be explicit and not rely on Swift's default access control level ("internal").
 
+It is far easier to change the access control of your code to be more permissive later (along the spectrum: "private" to "internal" to "public") as needed. Code that has too permissive access control might be used inappropriately by other code. Making code more restrictive could involve finding the inappropriate or incorrect uses and providing better interfaces. This is a trying to close the stable door after the horse has bolted style problem. An example of this could be a type exposing an internal cache publicly.
+
+If your codebase grows in the future, it may end being broken down into sub-modules. Doing so on a codebase already decorated with access control information is much quicker and easier.
+
+**Tip:** When possible, properties should be readonly. Or better yet, don’t expose them at all!
+
+### Avoid boolean traps when creating APIs
+When creating new methods, try to make it so readers do not have to dig into the documentation or implementation to figure out what something means.
+
+For instance, do NOT do stuff like: ```def refresh(animated: BOOL)```; BAD. Although it is clear in the implementation that the flag is referring to whether the refresh must happen with animation, in the caller side, you will see code that looks like this: ```foobar.refresh(true)``` BAD, where it is impossible to figure out by reading what the parameter refer to.
+
+To mitigate this, you should name your methods so the word prior to the param indicates what it is expecting. To be even clearer, you may also use an enum for the parameter. e.g. ``` def refresh(withTransitionType transitionType: FoobarTransitionType)```.
+
+A pretty good read on this subject: [hall of api shame: boolean trap.](http://ariya.ofilabs.com/2011/08/hall-of-api-shame-boolean-trap.html)
+
+### Document what your code does not support
+It is impossible to design things to support every foreseeable use case, but you should try to document any known issues. For instance, if a view controller does not lay out its subviews properly in landscape mode, leave a comment so people wishing to reuse it later will know.
+
+### Reduce scope of variables
+When reading code, it is usually best if variables are declared and used in the smallest scopes possible, so it is easier to read and reason through the effects of the variables (where they are used, modified, etc.).
+
+### Always inject dependancies
+If your class relies on something to handle network requests, for example, then why not pass that into the ```init``` function?
