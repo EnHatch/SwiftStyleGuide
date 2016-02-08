@@ -6,6 +6,10 @@ This document contains a set of recommended guidelines, conventions, and best pr
 
 **Note:** Apple is generally right. Defer to Apple's preferred or demonstrated way of doing things. You should follow the style of Apple's code as defined within their [“The Swift Programming Language”](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/index.html#//apple_ref/doc/uid/TP40014097-CH3-ID0) book wherever possible. However Apple is a large corporation and be prepared to see discrepancies in their example code.
 
+## Line Length
+
+Each line should have a maximum of **120** characters. To be able to handle this limit, set a page guide at column 120. You can do this by going to Prefences->Text Editing
+
 ## Spacing
 
 **Indent using 2 spaces** rather than tabs to conserve space and help prevent line wrapping. Be sure to set this preference in Xcode as shown below
