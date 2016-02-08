@@ -636,3 +636,7 @@ When reading code, it is usually best if variables are declared and used in the 
 
 ### Always inject dependancies
 If your class relies on something to handle network requests, for example, then why not pass that into the ```init``` function?
+
+### Use a local project for throw away test view controllers
+**Code that isn't production should never be added to the project**
+If you want to create a view controller to test a view or other class you've made, create a new local project and a workspace. Add your throw away project and your "real" project to the workspace. Create your test view controller in the throw away project and it should be able to access any classes in its workspace.
